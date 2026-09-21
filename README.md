@@ -10,40 +10,23 @@
 2. În repo: Settings → Pages → Custom domain → scrii `www.autozm.it` → Save (GitHub emite certificat HTTPS automat)
 3. Bifezi „Enforce HTTPS". Gata — fără alte modificări în cod.
 
-### Varianta A — Google Sheets ca admin (RECOMANDAT, cel mai simplu) ✅
-Fără consolă tehnică, fără chei, fără parole de configurat. Tabelul ESTE panoul admin:
+### Cum funcționează stocarea partajată (permanentă, vizibilă tuturor)
+Sursa unică de adevăr este **`data/stock.json`** din repo:
+- **Site public** (toți vizitatorii): la fiecare încărcare citește `data/stock.json` proaspăt (fără cache). Fără rețea → fallback local/demo.
+- **Admin**: salvează local + dacă e conectat GitHub, face **commit automat** în repo (pozele încărcate de pe PC ajung fișiere în `assets/img/stock/`). GitHub Pages republică în ~1 min → anunțul e vizibil tuturor.
+- Fără token: panoul merge în **mod local** (doar browserul tău), cu avertisment clar.
 
-1. Pe contul Google (sheets.new) creează un tabel cu **prima linie exact așa** (copiază):
-```
-id | marca | model | an | pret | km | carburant | cutie | putere | culoare | tractiune | locuri | status | descriere | dotari | imagini
-```
-2. Completează mașinile sub headere, una pe linie:
-   - `status`: Disponibile / Riservata / Venduta
-   - `carburant`: Diesel / Benzina / Ibrida / Elettrica / GPL • `cutie`: Manuale / Automatico
-   - `dotari`: separate prin virgulă • `imagini`: linkuri, separate prin virgulă
-   - `id`: poți lăsa gol (se generează automat)
-3. **Condividi → Chiunque abbia il link (Lettore)** → copiază linkul și **trimite-mi-l mie**.
-4. Eu montez ID-ul în site + public automat. Din acel moment: ce editezi în tabel apare pe site în câteva minute, pentru toată lumea. Panoul admin rămâne pentru copierea linkurilor de promovare.
-
-### Varianta B — Firebase (avansat, timp real instant)
-Fără asta, anunțurile se salvează doar în browserul adminului. Pași (gratuit, ~10 min):
-
-1. Intră pe **console.firebase.google.com** (cont Google) → **Add project** → nume `Auto-ZM` → Continue (Analytics poți să-l dezactivezi).
-2. Meniu **Build → Realtime Database** → **Create Database** → locație `europe-west1 (Belgia)` → **Start in locked mode**.
-3. Tab **Rules** → lipește și **Publish**:
-```
-{"rules":{".read":true,".write":false,"cars":{".write":"auth != null"}}}
-```
-4. **Project Overview → </> (web)** → nickname `site` → **Register** → copiază obiectul `firebaseConfig` și **trimite-mi-l mie** — îl montez eu în `js/firebase-config.js` și public automat.
-5. Meniu **Build → Authentication → Sign-in method** → **Email/Password → Enable** → tab **Users → Add user** → email + parolă puternică → acestea devin **datele de login în panoul admin** (în locul admin/autozm123).
-
-Cum funcționează după: adminul se loghează cu emailul, tot ce salvează ajunge instant în baza comună, iar site-ul public se actualizează **live, fără refresh**, pentru toți vizitatorii. Planul gratuit ajunge lejer (1 GB, 100 conexiuni simultane).
+### Conectarea GitHub în panou (o singură dată)
+1. Pe GitHub (contul labsfrontier): **Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token**
+2. Nume ex: `autozm-admin`, expirare la alegere, **Repository access: Only select repositories → Auto-ZM-SRL**, permisiuni **Contents: Read and write** → Generate.
+3. În panou, tab **Backup & Impostazioni → secțiunea Pubblicazione online**: lipește tokenul → **Collega / Verifica**. Tokenul rămâne **doar în browserul tău** (localStorage), nu în cod.
+4. Din acel moment fiecare Salva/Elimina/Import publică automat online. Butonul **🔗 Link** copiază linkul public al anunțului (`.../detalii.html?id=...`), gata de distribuit.
 
 ### Important: datele adminului
 Stocul mașinilor se salvează în browser (localStorage) **separat pe fiecare adresă**. Lucrează pe URL-ul LIVE pentru anunțuri reale; ce e pe localhost rămâne local. Folosește Export/Import JSON pentru mutări.
 
-Site profesional, static (HTML + CSS + JS), fără server, fără bază de date.
-Datele mașinilor se salvează în browser (localStorage) — perfect pentru un parc auto mic.
+Site profesional, static (HTML + CSS + JS), fără server propriu.
+Datele mașinilor: **`data/stock.json`** în repo (partajat, permanent, vizibil tuturor) + oglindă locală în browser.
 
 ## Cum deschizi site-ul
 - Deschide `index.html` în browser, sau
@@ -59,16 +42,16 @@ Datele mașinilor se salvează în browser (localStorage) — perfect pentru un 
 > Fără metode de plată, conform cerinței. Plata se face la sediu, cu contract + factură.
 
 ## Interfața de administrator (separată)
-- Adresă: `admin/index.html`
-- Login demo: utilizator `admin` / parolă `autozm123` (o schimbi din tab-ul Backup & Setări)
-- Poți: **adăuga / edita / șterge mașini**, scrie **descrieri lungi**, dotări, preț, km, status (Disponibil/Rezervat/Vândut), poze prin link SAU încărcare de pe calculator.
-- Tot ce salvezi apare instant pe site (Home + Stock + Dettagli).
-- Backup: Export / Import JSON + Reset demo.
+- Adresă: `admin/index.html` (live: .../admin/)
+- Login: utilizator `admin` / parolă `autozm123` (o schimbi din tab-ul Backup & Impostazioni, secțiunea password, sau butonul 🔑 Password de sus)
+- Poți: **adăuga / edita / șterge mașini**, scrie **descrieri lungi**, dotări, preț, km, status (Disponibile/Riservata/Venduta), poze prin link SAU încărcare de pe calculator (ajung fișiere în `assets/img/stock/` la publicare).
+- Buton **🔗 Link** la fiecare mașină → copiază linkul public al anunțului pentru distribuire/promovare (+ buton de share și pe pagina publică Detalii).
+- Tot ce salvezi (cu GitHub conectat) se publică automat și apare tuturor pe site în ~1 min (Home + Stock + Dettagli).
+- Backup: Export / Import JSON + Reset demo + Sincronizare din stock-ul online.
 
-## Poza de fundal din footer (biroul Auto ZM)
-1. Salvează poza din chat ca `footer-birou.jpg`
-2. Pune-o în `assets/img/footer-birou.jpg`
-3. Gata — footerul o folosește automat cu overlay bleumarin peste.
+## Poze (deja instalate în `assets/img/`)
+- `footer-birou.jpg` → biroul (fundal footer) • `panorama-cover.jpg` / `panorama-sede.jpg` → bannere panoramice
+- `parc-1/2/3.jpg`, `parc-cover.jpg` → parc • `logo.svg` → logo • `assets/img/stock/` → pozele încărcate din panou (create automat la publicare)
 
 ## Date firmă (de pe cartea de vizită)
 - Telefon/WhatsApp: +39 366 548 3387 (Mario)
@@ -79,5 +62,5 @@ Datele mașinilor se salvează în browser (localStorage) — perfect pentru un 
 ## Personalizări rapide
 - Culori: `css/style.css` → variabilele `:root` (--navy, --brand, --silver...).
 
-## Publicare gratuită
-Poți urca tot folderul pe Netlify Drop / Vercel / GitHub Pages — merge direct, fără build.
+## Publicare
+Live pe GitHub Pages din branch `main` — fiecare `git push` republică automat. Fără build.
