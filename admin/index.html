@@ -91,6 +91,14 @@
 
       <!-- BACKUP -->
       <div id="tab-backup" style="display:none">
+        <h3>🌐 Pubblicazione online (visibile a tutti i clienti)</h3>
+        <div class="alert" id="gh-status">💻 Verifica collegamento...</div>
+        <div class="field"><label>GitHub Token</label><input id="gh-token" type="password" placeholder="github_pat_..." autocomplete="off"><small>Il token resta salvato <b>solo in questo browser</b>. <a href="https://github.com/settings/personal-access-tokens/new" target="_blank"><b>Crea un token qui →</b></a> (fine-grained, solo repo <b>Auto-ZM-SRL</b>, permessi <b>Contents: Read and write</b>).</small></div>
+        <div style="display:flex;gap:.7rem;margin:0 0 1rem;flex-wrap:wrap">
+          <button class="btn btn-dark btn-sm" id="btn-gh-save">Collega / Verifica</button>
+          <button class="btn btn-light btn-sm" id="btn-gh-clear">Disconnetti</button>
+          <button class="btn btn-gold btn-sm" id="btn-sync">🔄 Sincronizza dallo stock online</button>
+        </div>
         <h3>💾 Backup / Ripristino</h3>
         <p style="color:var(--muted)">I dati si salvano nel browser di questo computer. Fai backup regolarmente per non perderli.</p>
         <div style="display:flex;gap:.7rem;margin:1rem 0;flex-wrap:wrap">
@@ -115,6 +123,7 @@
 <script src="../js/firebase-config.js"></script>
 <script src="../js/db.js"></script>
 <script src="../js/data.js"></script>
+<script src="../js/store.js"></script>
 <script src="../js/admin.js"></script>
 </body>
 </html>

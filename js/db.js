@@ -1,7 +1,9 @@
 /* DB Auto ZM — priorità: Firebase (se configurato) > Google Sheet (se ID) > locale.
    - Firebase: lettura pubblica + scrittura admin autenticato, live realtime.
    - Sheet: il FOGLIO è l'admin (lettura pubblica, refresh ogni 5 min).
-   - Locale: fallback offline (come prima). */
+   - Locale: fallback offline (come prima).
+   NOTA: nessun dato locale viene toccato durante il caricamento degli
+   script — tutto avviene in modo lazy, dopo il parsing completo. */
 const DB = (()=>{
   let mode = "local", db = null, auth = null, cache = null;
   const subs = [];
@@ -15,10 +17,17 @@ const DB = (()=>{
     });
   }
   function sheetOn(){
-    return (typeof SHEET_ID !== "undefined") && SHEET_ID && SHEET_ID.length > 10;
+    try{ return (typeof SHEET_ID !== "undefined") && !!SHEET_ID && SHEET_ID.length > 10; }
+    catch(e){ return false; }
   }
   function fbOn(){
-    return (typeof FIREBASE_CONFIG !== "undefined") && FIREBASE_CONFIG && FIREBASE_CONFIG.apiKey;
+    try{ return (typeof FIREBASE_CONFIG !== "undefined") && !!FIREBASE_CONFIG && !!FIREBASE_CONFIG.apiKey; }
+    catch(e){ return false; }
+  }
+  function ensureLocal(){
+    if(cache) return;
+    try{ cache = loadCars(); }
+    catch(e){ cache = []; }
   }
 
   /* ---------- Google Sheet ---------- */
@@ -91,13 +100,12 @@ const DB = (()=>{
 
   function ingest(arr){
     cache = [...arr];
-    try{ saveCars(cache); }catch(e){}
+    try{ if(typeof saveCars !== "undefined") saveCars(cache); }catch(e){}
     subs.forEach(cb=>{ try{ cb([...arr]); }catch(e){} });
   }
 
-  /* ---------- avvio ---------- */
+  /* ---------- avvio (solo cloud; il locale è lazy in getCars) ---------- */
   const ready = (async ()=>{
-    // 1) Firebase
     try{
       if(fbOn()){
         const V = "https://www.gstatic.com/firebasejs/10.12.0/";
@@ -110,24 +118,21 @@ const DB = (()=>{
         mode = "firebase";
       }
     }catch(e){ mode = "local"; }
-    cache = loadCars();
     if(mode === "firebase"){
       try{
         const snap = await db.ref("cars").get();
         if(snap.exists()){
           const arr = Object.values(snap.val()).filter(Boolean);
           arr.sort((a,b)=>((b.createdAt||0)-(a.createdAt||0)));
-          if(arr.length){ cache = arr; try{ saveCars(cache); }catch(e){} }
+          if(arr.length) cache = arr;
         }
       }catch(e){}
     } else if(sheetOn()){
-      // 2) Google Sheet
       try{
         const arr = await loadSheet();
-        if(arr.length){ mode = "sheet"; cache = arr; try{ saveCars(cache); }catch(e){} }
+        if(arr.length){ mode = "sheet"; cache = arr; }
       }catch(e){}
-      if(mode !== "sheet"){ /* sheet non raggiungibile: resta locale */ }
-      else {
+      if(mode === "sheet"){
         setInterval(async ()=>{
           try{
             const arr = await loadSheet();
@@ -136,7 +141,7 @@ const DB = (()=>{
         }, SHEET_POLL_MS);
       }
     }
-    return [...cache];
+    return true;
   })();
 
   async function writeAllFb(cars){
@@ -151,10 +156,14 @@ const DB = (()=>{
     isSheet: ()=>mode === "sheet",
     isFirebase: ()=>mode === "firebase",
     getAuth: ()=>auth,
-    async getCars(){ const c = await ready; return [...c]; },
+    async getCars(){
+      await ready;
+      ensureLocal();
+      return [...cache];
+    },
     async saveAll(cars){
       cache = [...cars];
-      try{ saveCars(cache); }catch(e){}
+      try{ if(typeof saveCars !== "undefined") saveCars(cache); }catch(e){}
       if(mode === "firebase") await writeAllFb(cache);
       if(mode === "sheet") throw new Error("sheet-readonly");
     },
