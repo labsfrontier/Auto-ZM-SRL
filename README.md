@@ -1,5 +1,18 @@
 # Auto ZM SRL — Site parc auto (fără plăți online)
 
+## 🌍 LIVE (permanent, online 24/7)
+- Site: **https://labsfrontier.github.io/Auto-ZM-SRL/**
+- Admin: **https://labsfrontier.github.io/Auto-ZM-SRL/admin/** (admin / autozm123)
+- Repo: https://github.com/labsfrontier/Auto-ZM-SRL (branch `main` → deploy automat la fiecare `git push`)
+
+### Domeniu propriu (când îl cumperi, ex: autozm.it)
+1. La registrar setezi DNS: record CNAME `www` → `labsfrontier.github.io` (+ 4 record A apex către 185.199.108.153 / .109.153 / .110.153 / .111.153)
+2. În repo: Settings → Pages → Custom domain → scrii `www.autozm.it` → Save (GitHub emite certificat HTTPS automat)
+3. Bifezi „Enforce HTTPS". Gata — fără alte modificări în cod.
+
+### Important: datele adminului
+Stocul mașinilor se salvează în browser (localStorage) **separat pe fiecare adresă**. Lucrează pe URL-ul LIVE pentru anunțuri reale; ce e pe localhost rămâne local. Folosește Export/Import JSON pentru mutări.
+
 Site profesional, static (HTML + CSS + JS), fără server, fără bază de date.
 Datele mașinilor se salvează în browser (localStorage) — perfect pentru un parc auto mic.
 
