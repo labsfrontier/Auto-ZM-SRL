@@ -24,9 +24,9 @@ function msg(t, ok=true){
   setTimeout(()=>$("msg").innerHTML="", 4000);
 }
 function syncBadge(){
-  return cloudOn()
-    ? `<span>☁️ Online — le modifiche sono visibili a tutti</span>`
-    : `<span>💾 Solo locale — configura Firebase (vedi README)</span>`;
+  if(cloudOn()) return `<span>☁️ Online — le modifiche sono visibili a tutti</span>`;
+  if(DB.isSheet()) return `<span>📊 Google Sheet — le modifiche si fanno nel foglio</span>`;
+  return `<span>💾 Solo locale — vedi README (Sheet/Firebase)</span>`;
 }
 
 // TABS
@@ -91,9 +91,9 @@ function renderList(){
       <td>${formatKm(c.km)}</td>
       <td>${statusLabel(c.status).t}</td>
       <td><div class="row-actions">
-        <button class="btn btn-light btn-sm" onclick="copyLink('${c.id}')">🔗 Link</button>
+        <button class="btn btn-light btn-sm" onclick="copyLink('${c.id}')">🔗 Link</button>${DB.isSheet() ? "" : `
         <button class="btn btn-edit btn-sm" onclick="editCar('${c.id}')">Modifica</button>
-        <button class="btn btn-danger btn-sm" onclick="delCar('${c.id}')">Elimina</button>
+        <button class="btn btn-danger btn-sm" onclick="delCar('${c.id}')">Elimina</button>`}
       </div></td>
     </tr>`).join("") || `<tr><td colspan="6">Nessuna auto. Premi „Nuova auto".</td></tr>`;
   const disp = CARS.filter(c=>c.status==="disponibil").length;
@@ -109,7 +109,7 @@ async function persist(cars){
     renderList();
     return true;
   }catch(e){
-    msg("⛔ Scrittura rifiutata. Rieffettua il login e riprova.", false);
+    msg(DB.isSheet() ? "📊 In modalità Foglio le modifiche si fanno nel foglio Google." : "⛔ Scrittura rifiutata. Rieffettua il login e riprova.", false);
     return false;
   }
 }
@@ -154,6 +154,7 @@ $("c-imagini-url").addEventListener("input", renderPreview);
 // SALVA
 $("car-form").addEventListener("submit", async e=>{
   e.preventDefault();
+  if(DB.isSheet()){ msg("✏️ In modalità Foglio le auto si aggiungono nel foglio Google, non qui.", false); goTab("lista"); return; }
   const urls = $("c-imagini-url").value.split("\n").map(s=>s.trim()).filter(Boolean);
   const dataUrls = uploadedImages.filter(u=>u.startsWith("data:"));
   const imagini = [...urls, ...dataUrls];
@@ -224,6 +225,11 @@ $("btn-save-pass").onclick = async ()=>{
 // AVVIO
 function enterDash(){
   show("dash");
+  if(DB.isSheet()){
+    const t = document.querySelector('.tab[data-tab="adauga"]');
+    if(t) t.style.display = "none";
+    msg("✏️ Aggiunte e modifiche si fanno nel <b>foglio Google</b>. Qui puoi copiare i <b>🔗 Link</b> da promuovere.");
+  }
   if(cloudOn() && fbUser){
     $("s-user").value = fbUser.email || "";
     $("s-pass").value = "";

@@ -10,7 +10,22 @@
 2. În repo: Settings → Pages → Custom domain → scrii `www.autozm.it` → Save (GitHub emite certificat HTTPS automat)
 3. Bifezi „Enforce HTTPS". Gata — fără alte modificări în cod.
 
-### Database condiviso (Firebase) — ca anunțurile adminului să le vadă TOȚI
+### Varianta A — Google Sheets ca admin (RECOMANDAT, cel mai simplu) ✅
+Fără consolă tehnică, fără chei, fără parole de configurat. Tabelul ESTE panoul admin:
+
+1. Pe contul Google (sheets.new) creează un tabel cu **prima linie exact așa** (copiază):
+```
+id | marca | model | an | pret | km | carburant | cutie | putere | culoare | tractiune | locuri | status | descriere | dotari | imagini
+```
+2. Completează mașinile sub headere, una pe linie:
+   - `status`: Disponibile / Riservata / Venduta
+   - `carburant`: Diesel / Benzina / Ibrida / Elettrica / GPL • `cutie`: Manuale / Automatico
+   - `dotari`: separate prin virgulă • `imagini`: linkuri, separate prin virgulă
+   - `id`: poți lăsa gol (se generează automat)
+3. **Condividi → Chiunque abbia il link (Lettore)** → copiază linkul și **trimite-mi-l mie**.
+4. Eu montez ID-ul în site + public automat. Din acel moment: ce editezi în tabel apare pe site în câteva minute, pentru toată lumea. Panoul admin rămâne pentru copierea linkurilor de promovare.
+
+### Varianta B — Firebase (avansat, timp real instant)
 Fără asta, anunțurile se salvează doar în browserul adminului. Pași (gratuit, ~10 min):
 
 1. Intră pe **console.firebase.google.com** (cont Google) → **Add project** → nume `Auto-ZM` → Continue (Analytics poți să-l dezactivezi).

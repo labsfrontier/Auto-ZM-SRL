@@ -1,9 +1,13 @@
 /* ============================================================
-   Configurazione Firebase — INCOLLA QUI i dati dalla console.
-   Vedi README → sezione "Database condiviso (Firebase)".
-   Senza questi dati il sito funziona in modalità LOCALE.
+   CONFIGURAZIONE CLOUD — due strade (basta UNA):
+   A) GOOGLE SHEETS (consigliato, semplicissimo): crea il foglio
+      come da README, condividilo "Chiunque abbia il link", poi
+      incolla qui sotto solo l'ID (quella stringa lunga nel link).
+   B) FIREBASE (avanzato): vedi README → sezione Firebase.
+   Senza niente, il sito funziona in modalità LOCALE.
    ============================================================ */
-const FIREBASE_CONFIG = null;
+const SHEET_ID = null; // es: "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms"
+/* const SHEET_ID = "INCOLLA_QUI_ID_FOGLIO"; */
 
 /* Esempio (dopo la configurazione, cancella "null" e incolla):
 const FIREBASE_CONFIG = {
