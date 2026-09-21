@@ -1,4 +1,4 @@
-/* Admin Auto ZM — login + CRUD + pubblicazione online (GitHub) */
+/* Admin Auto ZM — login + CRUD, database Neon condiviso */
 const AUTH_KEY = "autoZM_auth_v1";
 const CARS_KEY = "autoZM_cars_v2";
 const PUBLIC_BASE = "https://labsfrontier.github.io/Auto-ZM-SRL"; // cambia qui quando aggiungi il dominio proprio
@@ -21,7 +21,7 @@ function msg(t, ok=true){
   setTimeout(()=>$("msg").innerHTML="", 6000);
 }
 
-// LOGIN
+// LOGIN panou
 $("login-form").addEventListener("submit", e=>{
   e.preventDefault();
   const a = getAuth();
@@ -78,33 +78,38 @@ function renderList(){
     </tr>`).join("") || `<tr><td colspan="6">Nessuna auto. Premi „Nuova auto".</td></tr>`;
 
   const disp = cars.filter(c=>c.status==="disponibil").length;
-  const mode = Store.isOnline() ? "🌐 Online — le modifiche vanno a tutti" : "💻 Locale — collega GitHub per pubblicare";
+  const mode = Store.isOnline() ? "🌐 Neon — le modifiche vanno a tutti" : "💻 Locale — accedi a Neon per pubblicare";
   $("stats-bar").innerHTML = `<span><b>${mode}</b></span><span>📦 Totale: <b>${cars.length}</b></span><span>✅ Disponibili: <b>${disp}</b></span><span>💰 Valore stock: <b>${formatPrice(cars.reduce((s,c)=>s+Number(c.pret||0),0))}</b></span>`;
 }
 $("a-search").addEventListener("input", renderList);
 $("a-filter").addEventListener("change", renderList);
 
-/* Salva in locale + pubblica online se collegato */
-async function afterLocalChange(cars, label){
+/* Salva in locale + su Neon (se connesso) */
+async function afterLocalChange(cars, label, persistFn){
   saveCars(cars);
   renderList();
-  if(Store.isOnline()){
-    msg("⏳ " + label + " — pubblicazione online in corso...");
-    try{
-      await Store.publish(cars);
-      renderList();
-      msg("✅ " + label + " — <b>pubblicato online!</b> Visibile a tutti tra ~1 minuto (ricarica il sito).");
-    }catch(e){
-      msg("⚠️ Salvato in locale, pubblicazione fallita: " + e.message, false);
-    }
-  } else {
-    msg("✅ " + label + " — salvato in <b>locale</b> (solo questo browser). Collega GitHub in Backup per pubblicare a tutti.");
+  if(!Store.isOnline()){
+    msg("✅ " + label + " — salvato in <b>locale</b> (solo questo browser). Accedi a Neon in Backup per pubblicare a tutti.");
+    return;
+  }
+  msg("⏳ " + label + " — salvataggio su Neon...");
+  try{
+    await persistFn();
+    await Store.pull();
+    renderList();
+    msg("✅ " + label + " — <b>online su Neon!</b> Visibile a tutti i clienti.");
+  }catch(e){
+    if(String(e.message).includes("UNAUTHORIZED")){
+      msg("⚠️ Sessione Neon scaduta — accedi di nuovo (Backup → Connetti a Neon).", false);
+      goTab("backup");
+    } else msg("⚠️ Salvato in locale, errore Neon: " + e.message, false);
   }
 }
 
 window.delCar = id=>{
   if(!confirm("Eliminare sicura questa auto?")) return;
-  afterLocalChange(Store.getCars().filter(c=>String(c.id)!==String(id)), "Auto eliminata.");
+  const list = Store.getCars().filter(c=>String(c.id)!==String(id));
+  afterLocalChange(list, "Auto eliminata.", ()=>Store.deleteCar(id));
 };
 window.editCar = id=>{
   const c = Store.getCars().find(x=>String(x.id)===String(id));
@@ -125,12 +130,14 @@ window.editCar = id=>{
 $("btn-new").onclick = ()=>{ editingId=null; uploadedImages=[]; $("car-form").reset(); $("img-preview").innerHTML=""; $("form-title").textContent="➕ Aggiungi nuova auto"; goTab("adauga"); };
 $("btn-cancel").onclick = ()=>{ editingId=null; $("car-form").reset(); goTab("lista"); };
 
-// Upload immagini -> base64 (in pubblicazione vanno nel repo come file)
+// Upload foto -> ottimizzate JPEG nel browser (vanno su Neon come dataURL)
 $("c-files").addEventListener("change", e=>{
   [...e.target.files].forEach(f=>{
-    const r = new FileReader();
-    r.onload = ()=>{ uploadedImages.push(r.result); renderPreview(); };
-    r.readAsDataURL(f);
+    Store.optimizeImage(f).then(d=>{ uploadedImages.push(d); renderPreview(); }).catch(()=>{
+      const r = new FileReader();
+      r.onload = ()=>{ uploadedImages.push(r.result); renderPreview(); };
+      r.readAsDataURL(f);
+    });
   });
 });
 function renderPreview(){
@@ -165,7 +172,7 @@ $("car-form").addEventListener("submit", e=>{
   editingId=null; uploadedImages=[]; $("car-form").reset(); $("img-preview").innerHTML="";
   $("form-title").textContent="➕ Aggiungi nuova auto";
   goTab("lista");
-  afterLocalChange(cars, "Auto salvata.");
+  afterLocalChange(cars, "Auto salvata.", ()=>Store.upsertCar(obj));
 });
 
 // BACKUP
@@ -176,10 +183,10 @@ $("btn-export").onclick = ()=>{
 $("import-file").addEventListener("change", e=>{
   const f = e.target.files[0]; if(!f) return;
   const r = new FileReader();
-  r.onload = ()=>{ try{ const arr=JSON.parse(r.result); if(!Array.isArray(arr)) throw 0; afterLocalChange(arr, "Backup importato ("+arr.length+" auto)."); }catch{ msg("❌ File non valido.", false);} };
+  r.onload = ()=>{ try{ const arr=JSON.parse(r.result); if(!Array.isArray(arr)) throw 0; afterLocalChange(arr, "Backup importato ("+arr.length+" auto).", ()=>Store.replaceAll(arr)); }catch{ msg("❌ File non valido.", false);} };
   r.readAsText(f);
 });
-$("btn-reset").onclick = ()=>{ if(confirm("Ripristinare i dati demo? Le modifiche andranno perse.")){ afterLocalChange([...DEFAULT_CARS], "Dati demo ripristinati."); } };
+$("btn-reset").onclick = ()=>{ if(confirm("Ripristinare i dati demo? Le modifiche andranno perse.")){ const demo=[...DEFAULT_CARS]; afterLocalChange(demo, "Dati demo ripristinati.", ()=>Store.replaceAll(demo)); } };
 $("btn-save-pass").onclick = ()=>{
   const u=$("s-user").value.trim(), p=$("s-pass").value.trim();
   if(u.length<3||p.length<6){ msg("⚠️ Utente minimo 3, password minimo 6 caratteri.", false); return; }
@@ -187,44 +194,47 @@ $("btn-save-pass").onclick = ()=>{
   msg("✅ Dati di accesso aggiornati.");
 };
 
-// GITHUB: collegamento pubblicazione online
-function ghStatus(){
-  const el = $("gh-status");
+// NEON: collegamento database condiviso
+function neonStatus(){
+  const el = $("neon-status");
   if(!el) return;
   if(Store.isOnline()){
     el.className = "alert success";
-    el.innerHTML = "🌐 <b>Collegato a GitHub</b> — ogni salvataggio viene pubblicato online e diventa visibile a tutti i clienti.";
+    el.innerHTML = "🌐 <b>Connesso a Neon</b> — ogni salvataggio va nel database condiviso, visibile a tutti i clienti.";
   } else {
     el.className = "alert";
-    el.innerHTML = "💻 <b>Modalità locale</b> — le modifiche restano in questo browser. Incolla un token per pubblicare online.";
+    el.innerHTML = "💻 <b>Non connesso</b> — le modifiche restano in questo browser. Accedi qui sotto per pubblicare su Neon.";
   }
 }
-$("btn-gh-save").onclick = async ()=>{
-  const t = $("gh-token").value.trim();
-  if(!t){ msg("⚠️ Incolla prima il token GitHub.", false); return; }
-  Store.setToken(t);
-  msg("⏳ Verifica token...");
+$("btn-neon-login").onclick = async ()=>{
+  const p = $("neon-pass").value.trim();
+  if(!p){ msg("⚠️ Inserisci prima la password Neon.", false); return; }
+  msg("⏳ Connessione a Neon...");
   try{
-    await Store.testToken();
+    await Store.adminLogin(p);
+    $("neon-pass").value = "";
+    neonStatus();
     await Store.pull();
-    renderList(); ghStatus();
-    msg("✅ <b>Collegato!</b> Stock sincronizzato dal repo. Ora ogni salvataggio va online.");
-  }catch(e){ Store.clearToken(); ghStatus(); msg("❌ " + e.message, false); }
+    renderList();
+    msg("✅ <b>Connesso a Neon!</b> Stock sincronizzato. Ora ogni salvataggio va online.");
+  }catch(e){ neonStatus(); msg("❌ " + e.message, false); }
 };
-$("btn-gh-clear").onclick = ()=>{ Store.clearToken(); $("gh-token").value=""; ghStatus(); renderList(); msg("🔌 Disconnesso — ora lavori in locale."); };
+$("btn-neon-logout").onclick = ()=>{ Store.adminLogout(); neonStatus(); renderList(); msg("🔌 Disconnesso da Neon — ora lavori in locale."); };
 $("btn-sync").onclick = async ()=>{
-  if(!Store.isOnline()){ msg("⚠️ Collega prima GitHub (token).", false); return; }
-  msg("⏳ Sincronizzazione dallo stock online...");
-  try{ await Store.pull(); renderList(); msg("✅ Stock aggiornato dalla versione online."); }
-  catch(e){ msg("❌ Sincronizzazione fallita: " + e.message, false); }
+  msg("⏳ Sincronizzazione da Neon...");
+  try{
+    const r = await Store.pull();
+    if(!r) throw new Error("Neon non raggiungibile — controllo la connessione.");
+    renderList();
+    msg("✅ Stock aggiornato da Neon (" + r.length + " auto).");
+  }catch(e){ msg("❌ Sincronizzazione fallita: " + e.message, false); }
 };
 
 async function boot(){
   show("dash");
   const a = getAuth(); $("s-user").value=a.user;
-  const t = Store.getToken(); if(t) $("gh-token").value = t;
-  ghStatus();
-  msg("⏳ Caricamento stock...");
+  neonStatus();
+  msg("⏳ Caricamento stock da Neon...");
   await Store.init().catch(()=>{});
   renderList();
   $("msg").innerHTML = "";
