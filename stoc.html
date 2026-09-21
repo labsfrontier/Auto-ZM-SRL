@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Le nostre auto | Auto ZM SRL</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230f6cb2'/><text x='50' y='66' font-size='48' text-anchor='middle' fill='%23ffffff' font-family='Arial' font-weight='bold'>ZM</text></svg>">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="topbar"><div class="container"><span>📍 Via Castelleone, 130R - 26100 Cremona</span><span><a href="tel:+393665483387">📞 +39 366 548 3387</a></span></div></div>
+<header class="site"><div class="container nav">
+<a class="logo" href="index.html"><img class="logo-img" src="assets/img/logo.svg" alt="Auto.ZM SRL"></a>
+<button class="burger">☰</button>
+<nav class="links"><a href="index.html">Home</a><a href="stoc.html" class="active">Le nostre auto</a><a href="despre.html">Chi siamo</a><a href="contact.html">Contatti</a><a href="admin/index.html">🔒 Admin</a><a class="btn btn-gold" href="contact.html" style="padding:.6rem 1rem">Test Drive</a></nav>
+</div></header>
+
+<div class="brands-strip"><div class="container">
+  <span>Mercedes-Benz</span><span>BMW</span><span>Audi</span><span>Fiat</span><span>Volkswagen</span><span>Alfa Romeo</span><span>Porsche</span><span>Maserati</span><span>Land Rover</span><span>Toyota</span>
+</div></div>
+
+<section><div class="container">
+<div class="sec-head"><div><h2>Stock <span>Auto ZM</span></h2><p>Tutte le auto sono inserite dall'amministratore, con descrizioni reali e foto. Prezzi IVA inclusa.</p></div></div>
+<div class="layout">
+<aside class="filters">
+<h3>🔎 Filtri</h3>
+<div class="field"><label>Cerca</label><input id="f-search" placeholder="es: BMW, Golf, automatico..."></div>
+<div class="field"><label>Marca</label><select id="f-marca"><option value="">Tutte</option></select></div>
+<div class="field"><label>Alimentazione</label><select id="f-carb"><option value="">Tutte</option><option>Diesel</option><option>Benzina</option><option>Ibrida</option><option>Elettrica</option><option>GPL</option></select></div>
+<div class="field"><label>Cambio</label><select id="f-cutie"><option value="">Tutti</option><option>Manuale</option><option>Automatico</option></select></div>
+<div class="field"><label>Stato</label><select id="f-status"><option value="">Tutti</option><option value="disponibil">Disponibile</option><option value="rezervat">Riservata</option><option value="vandut">Venduta</option></select></div>
+<div class="field"><label>Budget massimo</label><select id="f-buget"><option value="">Indifferente</option><option value="12000">12.000 €</option><option value="15000">15.000 €</option><option value="18000">18.000 €</option><option value="22000">22.000 €</option><option value="30000">30.000 €</option></select></div>
+<div class="field"><label>Anno minimo</label><select id="f-an"><option value="">Indifferente</option><option>2016</option><option>2018</option><option>2020</option><option>2022</option></select></div>
+<button class="btn btn-light" id="f-reset" style="width:100%">Azzera filtri</button>
+<div class="alert" style="margin-top:1rem">💡 Non trovi quello che cerchi? <a href="contact.html"><b>Diccelo</b></a> — procuriamo su ordinazione in 7–14 giorni.</div>
+</aside>
+<div>
+<div class="toolbar"><span class="count" id="stoc-count"></span>
+<select id="f-sort" style="padding:.6rem .8rem;border:1px solid var(--line);border-radius:10px"><option value="">Ordina: consigliate</option><option value="pret-asc">Prezzo crescente</option><option value="pret-desc">Prezzo decrescente</option><option value="an-desc">Le più recenti</option><option value="km-asc">Meno chilometri</option></select></div>
+<div class="grid-cars" id="stoc-grid" style="grid-template-columns:repeat(2,1fr)"></div>
+</div>
+</div>
+</div></section>
+
+<footer class="site-footer"><div class="footer-bg"></div><div class="footer-overlay"></div>
+<div class="container footer-grid">
+<div><h4>Auto.ZM SRL</h4><p style="color:#cbd5e1;font-size:.93rem">Auto controllate, chilometri reali, documenti in 1 ora.</p><a href="https://maps.app.goo.gl/AwbDWWvYwVZwB7PV7" target="_blank" style="color:var(--gold-2);font-weight:700">⭐ Recensioni Google 5/5</a></div>
+<div><h4>Navigazione</h4><a href="index.html">Home</a><a href="stoc.html">Le nostre auto</a><a href="despre.html">Chi siamo</a><a href="contact.html">Contatti</a></div>
+<div><h4>Contatti</h4><a href="tel:+393665483387">📞 +39 366 548 3387</a><a href="mailto:auto.zm@yahoo.com">✉️ auto.zm@yahoo.com</a><a>📍 Via Castelleone, 130R - 26100 Cremona</a></div>
+<div><h4>Orari</h4><a>Lun–Ven: 09:00 – 18:00</a><a>Sabato: 09:00 – 14:00</a><a>Domenica: chiuso</a><a href="admin/index.html">🔒 Amministrazione</a></div>
+</div>
+<div class="container footer-bottom"><span>© 2026 Auto ZM SRL • P.IVA 01854340195</span><span>Nessun pagamento online.</span></div>
+</footer>
+<script src="js/data.js"></script><script src="js/main.js"></script>
+</body></html>

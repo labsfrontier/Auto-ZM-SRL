@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Auto ZM SRL — Autosalone | Auto controllate, senza pensieri</title>
+<meta name="description" content="Auto ZM SRL — autosalone a Cremona con auto controllate, storico completo, garanzia e documenti rapidi. Vedi lo stock aggiornato.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230f6cb2'/><text x='50' y='66' font-size='48' text-anchor='middle' fill='%23ffffff' font-family='Arial' font-weight='bold'>ZM</text></svg>">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="topbar"><div class="container">
+  <span>📍 Via Castelleone, 130R - 26100 Cremona &nbsp;•&nbsp; 🕘 Lun–Ven 09:00–18:00, Sab 09:00–14:00</span>
+  <span><a href="tel:+393665483387">📞 +39 366 548 3387</a> &nbsp; <a href="mailto:auto.zm@yahoo.com">✉️ auto.zm@yahoo.com</a></span>
+</div></div>
+
+<header class="site"><div class="container nav">
+  <a class="logo" href="index.html"><img class="logo-img" src="assets/img/logo.svg" alt="Auto.ZM SRL"></a>
+  <button class="burger" aria-label="Menu">☰</button>
+  <nav class="links">
+    <a href="index.html" class="active">Home</a>
+    <a href="stoc.html">Le nostre auto</a>
+    <a href="despre.html">Chi siamo</a>
+    <a href="contact.html">Contatti</a>
+    <a href="admin/index.html" title="Amministrazione">🔒 Admin</a>
+    <a class="btn btn-gold" href="stoc.html" style="padding:.6rem 1rem">Vedi le auto</a>
+  </nav>
+</div></header>
+
+<div class="brands-strip"><div class="container">
+  <span>Mercedes-Benz</span><span>BMW</span><span>Audi</span><span>Fiat</span><span>Volkswagen</span><span>Alfa Romeo</span><span>Porsche</span><span>Maserati</span><span>Land Rover</span><span>Toyota</span>
+</div></div>
+
+<div class="hero"><div class="container">
+  <div>
+    <span class="eyebrow">🚗 Autosalone • Auto controllate</span>
+    <h1>Compra l'auto <span>senza pensieri</span>, con documenti in regola.</h1>
+    <p class="lead">Da <b>Auto ZM SRL</b> ogni auto è controllata, con storico trasparente, chilometri reali e garanzia. Nessun pagamento online — vieni, vedi, provi, poi decidi.</p>
+    <div class="hero-cta">
+      <a class="btn btn-gold" href="stoc.html">🔍 Vedi le auto disponibili</a>
+      <a class="btn btn-ghost" href="contact.html">Prenota un test drive</a>
+    </div>
+    <div class="hero-stats">
+      <div><strong id="stat-stoc">20+</strong><span>auto in stock</span></div>
+      <div><strong>100%</strong><span>storico verificato</span></div>
+      <div><strong>10+ anni</strong><span>di esperienza</span></div>
+    </div>
+  </div>
+  <div class="hero-card">
+    <img src="assets/img/parc-cover.jpg" alt="Piazzale Auto ZM Cremona">
+    <div class="hero-card-body">
+      <b>📍 La nostra sede — Cremona</b>
+      <p style="color:#6b7689">Via Castelleone, 130R. Vieni a vedere le auto dal vivo — il caffè lo offriamo noi.</p>
+      <a class="btn btn-dark" href="stoc.html" style="margin-top:.6rem">Vedi lo stock →</a>
+    </div>
+  </div>
+</div></div>
+
+<div class="container">
+  <form class="searchbar" id="quick-search">
+    <div><label>Marca</label><select id="qs-marca"><option value="">Tutte le marche</option><option>BMW</option><option>Audi</option><option>Mercedes-Benz</option><option>Volkswagen</option><option>Toyota</option><option>Dacia</option><option>Skoda</option><option>Ford</option></select></div>
+    <div><label>Budget massimo</label><select id="qs-buget"><option value="">Indifferente</option><option value="15000">fino a 15.000 €</option><option value="18000">fino a 18.000 €</option><option value="22000">fino a 22.000 €</option><option value="30000">fino a 30.000 €</option></select></div>
+    <div><label>Alimentazione</label><select id="qs-carb"><option value="">Indifferente</option><option>Diesel</option><option>Benzina</option><option>Ibrida</option><option>Elettrica</option></select></div>
+    <div style="display:flex;align-items:end"><button class="btn btn-gold" type="submit" style="width:100%">Cerca →</button></div>
+  </form>
+</div>
+
+<div class="pano">
+  <img src="assets/img/panorama-cover.jpg" alt="Il nostro piazzale a Cremona">
+  <div class="pano-overlay"></div>
+  <div class="pano-text"><div class="container">
+    <h2>Il nostro piazzale a Cremona</h2>
+    <p>Decine di auto multimarca pronte al test drive — vieni a vederle dal vivo, senza impegno.</p>
+  </div></div>
+</div>
+
+<section><div class="container">
+  <div class="sec-head">
+    <div><h2>Auto <span>disponibili ora</span></h2><p>Stock aggiornato dall'amministratore. Premi „Dettagli" per descrizione completa, optional e foto.</p></div>
+    <a class="btn btn-light" href="stoc.html">Vedi tutto lo stock →</a>
+  </div>
+  <div class="grid-cars" id="featured"></div>
+</div></section>
+
+<section style="background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)"><div class="container">
+  <div class="sec-head"><div><h2>Perché <span>Auto ZM?</span></h2><p>Comprare un'auto usata non deve essere un rischio.</p></div></div>
+  <div class="features">
+    <div class="feature"><i>🔎</i><h4>Controllo in 150 punti</h4><p>Ispezione tecnica completa, prova su strada, verifica chilometri e danni nei database internazionali.</p></div>
+    <div class="feature"><i>📄</i><h4>Documenti rapidi</h4><p>Contratto, fattura e passaggio — pensiamo a tutto noi, per te.</p></div>
+    <div class="feature"><i>🛡️</i><h4>Garanzia reale</h4><p>Garanzia motore + cambio inclusa, con possibilità di estensione fino a 12 mesi.</p></div>
+    <div class="feature"><i>🔁</i><h4>Permuta usato</h4><p>Valutiamo la tua vecchia auto in 20 minuti e la scaliamo dal prezzo.</p></div>
+  </div>
+</div></section>
+
+<section><div class="container split">
+  <img src="assets/img/footer-birou.jpg" alt="Ufficio Auto ZM Cremona">
+  <div>
+    <span class="eyebrow">🏢 Il nostro autosalone</span>
+    <h2 style="font-size:2rem;margin:.6rem 0">Un piccolo autosalone, ma con una grande reputazione.</h2>
+    <p style="color:var(--muted)">Siamo un'azienda di famiglia. Non abbiamo pagamenti online proprio perché vogliamo che tu veda l'auto con i tuoi occhi prima di pagare un euro. Il prezzo esposto è finale, con IVA e documenti inclusi.</p>
+    <ul class="check">
+      <li>Chilometri originali — dimostrati con libretto tagliandi</li>
+      <li>Niente auto con danni strutturali, taxi o noleggi</li>
+      <li>Finanziamenti tramite banche partner e leasing (in sede)</li>
+      <li>Consegna in tutta Italia su bisarca</li>
+    </ul>
+    <div style="display:flex;gap:.7rem;margin-top:1rem;flex-wrap:wrap">
+      <a class="btn btn-dark" href="despre.html">La nostra storia</a>
+      <a class="btn btn-light" href="contact.html">Contattaci</a>
+    </div>
+  </div>
+</div></section>
+
+<section style="background:#0f1c33;color:#fff"><div class="container">
+  <div class="sec-head"><div><h2 style="color:#fff">Come acquistare in <span style="color:var(--gold-2)">3 semplici passi</span></h2><p style="color:#94a3b8">Nessun anticipo online, nessun account, nessuna carta. Tutto di persona.</p></div></div>
+  <div class="steps" style="color:#1a2333">
+    <div class="step"><strong>PASSO 1</strong><h3>🔍 Scegli e verifica</h3><p>Sfogli lo stock online, vieni in sede, controlli l'auto nella tua officina o nella nostra.</p></div>
+    <div class="step"><strong>PASSO 2</strong><h3>🚗 Test drive</h3><p>Test drive gratuito con documento d'identità. Ti spieghiamo tutto lo storico dell'auto.</p></div>
+    <div class="step"><strong>PASSO 3</strong><h3>📝 Documenti e chiavi</h3><p>Firmiamo contratto + fattura, paghi in sede (contanti / bonifico), vai via con l'auto.</p></div>
+  </div>
+</div></section>
+
+<section><div class="container">
+  <div class="sec-head"><div><h2>Cosa dicono <span>i nostri clienti</span></h2><p><a href="https://maps.app.goo.gl/AwbDWWvYwVZwB7PV7" target="_blank" style="color:var(--brand);font-weight:700">⭐ Recensioni Google 5/5 — leggile tutte →</a></p></div></div>
+  <div class="testis">
+    <div class="testi"><p>„Ho preso una Golf 8 da Auto ZM. Esattamente come nell'annuncio, documenti pronti in 40 minuti. Consigliati!"</p><strong>— Mihai P., Cremona ★★★★★</strong></div>
+    <div class="testi"><p>„Seri, mi hanno mostrato la verifica dei chilometri prima ancora che chiedessi. La RAV4 va benissimo."</p><strong>— Andreea C., Milano ★★★★★</strong></div>
+    <div class="testi"><p>„Hanno ritirato la mia vecchia Duster e sono ripartito con la Kuga lo stesso giorno."</p><strong>— Ionuț D., Brescia ★★★★★</strong></div>
+  </div>
+  <div class="cta-band" style="margin-top:2rem">
+    <div><h3 style="font-size:1.4rem">Hai trovato l'auto giusta?</h3><p style="color:#cbd5e1">Chiamaci ora — le auto migliori vanno via in fretta. Test drive gratuito.</p></div>
+    <div style="display:flex;gap:.7rem;flex-wrap:wrap"><a class="btn btn-gold" href="tel:+393665483387">📞 +39 366 548 3387</a><a class="btn btn-ghost" href="stoc.html">Vedi lo stock</a></div>
+  </div>
+</div></section>
+
+<footer class="site-footer">
+  <div class="footer-bg"></div><div class="footer-overlay"></div>
+  <div class="container footer-grid">
+    <div><a class="logo" href="index.html"><img class="logo-img" src="assets/img/logo.svg" alt="Auto.ZM SRL" style="background:#fff;border-radius:10px;padding:4px 12px;"></a>
+      <p style="margin-top:.8rem;color:#cbd5e1;font-size:.93rem">Autosalone con auto controllate, documenti rapidi e garanzia reale. Ti aspettiamo in sede — il caffè lo offriamo noi.</p>
+      <a href="https://maps.app.goo.gl/AwbDWWvYwVZwB7PV7" target="_blank" style="color:var(--gold-2);font-weight:700">⭐ Recensioni Google 5/5</a></div>
+    <div><h4>Navigazione</h4><a href="index.html">Home</a><a href="stoc.html">Le nostre auto</a><a href="despre.html">Chi siamo</a><a href="contact.html">Contatti</a></div>
+    <div><h4>Contatti</h4><a href="tel:+393665483387">📞 +39 366 548 3387 (Mario)</a><a href="mailto:auto.zm@yahoo.com">✉️ auto.zm@yahoo.com</a><a>📍 Via Castelleone, 130R - 26100 Cremona</a><a>🕘 Lun–Ven 09–18, Sab 09–14</a></div>
+    <div><h4>Info rapide</h4><a href="stoc.html">Auto disponibili</a><a href="contact.html">Prenota test drive</a><a href="admin/index.html">🔒 Amministrazione</a></div>
+  </div>
+  <div class="container footer-bottom"><span>© 2026 Auto ZM SRL • Tutti i diritti riservati • P.IVA 01854340195 · SDI: USAL8PV</span><span>Nessun pagamento online — si paga in sede.</span></div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 130" role="img" aria-label="Auto.ZM SRL">
+  <defs>
+    <linearGradient id="silver" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#b9bec6"/>
+      <stop offset=".5" stop-color="#8d939c"/>
+      <stop offset="1" stop-color="#6e747d"/>
+    </linearGradient>
+    <linearGradient id="blue" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2f9be8"/>
+      <stop offset="1" stop-color="#0a4d82"/>
+    </linearGradient>
+  </defs>
+  <!-- swoosh mașină: arc albastru + arc gri -->
+  <path d="M25 62 C120 30 210 28 300 44 C250 40 170 44 90 62 Z" fill="#0f6cb2"/>
+  <path d="M150 52 C220 18 300 16 395 50 C340 38 250 34 190 52 Z" fill="#0f6cb2"/>
+  <path d="M175 55 C240 30 310 30 360 50 C315 42 240 44 205 58 Z" fill="url(#silver)"/>
+  <!-- text -->
+  <text x="30" y="108" font-family="Arial, Helvetica, sans-serif" font-weight="900" font-style="italic" font-size="64" letter-spacing="-1">
+    <tspan fill="url(#silver)">Auto.</tspan><tspan fill="url(#blue)">ZM</tspan>
+  </text>
+  <text x="358" y="108" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="22" fill="#8d939c">SRL</text>
+</svg>

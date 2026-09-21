@@ -1,0 +1,9 @@
+POZE INSTALATE ✅ — nu mai trebuie să faci nimic.
+
+În acest folder se află acum:
+- footer-birou.jpg → poza cu BIROUL Auto ZM (fundalul footerului, cerută inițial)
+- parc-1.jpg, parc-2.jpg, parc-3.jpg → poze reale cu PARCUL (hero + pagina Despre)
+- logo.svg → logoul recreat după cartea de vizită (albastru + gri)
+
+Toate sunt deja legate în site și optimizate pentru web.
+Dacă vrei să schimbi o poză, înlocuiește fișierul păstrând același nume.
