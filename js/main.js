@@ -1,4 +1,4 @@
-/* Logica pagine pubbliche Auto ZM */
+/* Logica pagine pubbliche Auto ZM — dati live (Firebase se configurato) */
 function cardHTML(c){
   const s = statusLabel(c.status);
   const img = (c.imagini && c.imagini[0]) || "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?q=80&w=1200&auto=format&fit=crop";
@@ -33,14 +33,13 @@ document.addEventListener("click", e=>{
 });
 
 // HOME: in evidenza
-(function(){
+function renderFeatured(cars){
   const el = document.getElementById("featured");
   if(!el) return;
-  const cars = loadCars().filter(c=>c.status!=="vandut").slice(0,6);
-  el.innerHTML = cars.map(cardHTML).join("");
+  el.innerHTML = cars.filter(c=>c.status!=="vandut").slice(0,6).map(cardHTML).join("");
   const n = document.getElementById("stat-stoc");
-  if(n) n.textContent = loadCars().filter(c=>c.status==="disponibil").length + "+";
-})();
+  if(n) n.textContent = cars.filter(c=>c.status==="disponibil").length + "+";
+}
 
 // Ricerca rapida hero -> stoc.html con parametri
 (function(){
@@ -58,73 +57,74 @@ document.addEventListener("click", e=>{
 })();
 
 // STOCK: filtri + ordinamento + ricerca
-(function(){
+let stockAll = [];
+function buildMarche(){
+  const fMarca = document.getElementById("f-marca");
+  if(!fMarca) return;
+  const cur = fMarca.value;
+  fMarca.innerHTML = '<option value="">Tutte</option>';
+  [...new Set(stockAll.map(c=>c.marca))].sort().forEach(m=>{
+    const o = document.createElement("option"); o.value = m; o.textContent = m;
+    fMarca.appendChild(o);
+  });
+  if(cur && [...fMarca.options].some(o=>o.value===cur)) fMarca.value = cur;
+}
+function applyStock(){
   const grid = document.getElementById("stoc-grid");
   if(!grid) return;
+  const gv = id => (document.getElementById(id)||{value:""}).value;
+  let list = [...stockAll];
+  const q = (gv("f-search")||"").toLowerCase();
+  if(gv("f-marca")) list = list.filter(c=>c.marca===gv("f-marca"));
+  if(gv("f-carb")) list = list.filter(c=>c.carburant===gv("f-carb"));
+  if(gv("f-cutie")) list = list.filter(c=>c.cutie===gv("f-cutie"));
+  if(gv("f-status")) list = list.filter(c=>c.status===gv("f-status"));
+  if(gv("f-buget")) list = list.filter(c=>Number(c.pret)<=Number(gv("f-buget")));
+  if(gv("f-an")) list = list.filter(c=>Number(c.an)>=Number(gv("f-an")));
+  if(q) list = list.filter(c=>(c.marca+" "+c.model+" "+(c.descriere||"")).toLowerCase().includes(q));
+  const sort = gv("f-sort");
+  if(sort==="pret-asc") list.sort((a,b)=>a.pret-b.pret);
+  if(sort==="pret-desc") list.sort((a,b)=>b.pret-a.pret);
+  if(sort==="an-desc") list.sort((a,b)=>b.an-a.an);
+  if(sort==="km-asc") list.sort((a,b)=>a.km-b.km);
+  document.getElementById("stoc-count").textContent = list.length + " auto";
+  grid.innerHTML = list.length ? list.map(cardHTML).join("") : `<p style="color:#6b7689">Nessuna auto trovata con questi filtri. Chiamaci al <b>+39 366 548 3387</b> — procuriamo su ordinazione.</p>`;
+}
+function initStock(cars){
+  if(!document.getElementById("stoc-grid")) return;
+  stockAll = [...cars];
   const params = new URLSearchParams(location.search);
-  const fMarca = document.getElementById("f-marca");
-  const fCarb = document.getElementById("f-carb");
-  const fCutie = document.getElementById("f-cutie");
-  const fBuget = document.getElementById("f-buget");
-  const fAn = document.getElementById("f-an");
-  const fSearch = document.getElementById("f-search");
-  const fSort = document.getElementById("f-sort");
-  const fStatus = document.getElementById("f-status");
-
-  const all = loadCars();
-  // popola marche
-  const marci = [...new Set(all.map(c=>c.marca))].sort();
-  marci.forEach(m=>{
-    const o=document.createElement("option");o.value=m;o.textContent=m;fMarca.appendChild(o);
-  });
-  if(params.get("marca")) fMarca.value = params.get("marca");
-  if(params.get("carburant")) fCarb.value = params.get("carburant");
-  if(params.get("buget")) fBuget.value = params.get("buget");
-
-  function apply(){
-    let list = [...all];
-    const q = (fSearch.value||"").toLowerCase();
-    if(fMarca.value) list = list.filter(c=>c.marca===fMarca.value);
-    if(fCarb.value) list = list.filter(c=>c.carburant===fCarb.value);
-    if(fCutie.value) list = list.filter(c=>c.cutie===fCutie.value);
-    if(fStatus.value) list = list.filter(c=>c.status===fStatus.value);
-    if(fBuget.value){
-      const max = Number(fBuget.value);
-      list = list.filter(c=>Number(c.pret)<=max);
-    }
-    if(fAn.value){
-      const minAn = Number(fAn.value);
-      list = list.filter(c=>Number(c.an)>=minAn);
-    }
-    if(q) list = list.filter(c=>(c.marca+" "+c.model+" "+c.descriere).toLowerCase().includes(q));
-    if(fSort.value==="pret-asc") list.sort((a,b)=>a.pret-b.pret);
-    if(fSort.value==="pret-desc") list.sort((a,b)=>b.pret-a.pret);
-    if(fSort.value==="an-desc") list.sort((a,b)=>b.an-a.an);
-    if(fSort.value==="km-asc") list.sort((a,b)=>a.km-b.km);
-
-    document.getElementById("stoc-count").textContent = list.length + (list.length===1?" auto":" auto");
-    grid.innerHTML = list.length ? list.map(cardHTML).join("") : `<p style="color:#6b7689">Nessuna auto trovata con questi filtri. Chiamaci al <b>+39 366 548 3387</b> — procuriamo su ordinazione.</p>`;
+  buildMarche();
+  if(params.get("marca")){
+    const fm = document.getElementById("f-marca");
+    if([...fm.options].some(o=>o.value===params.get("marca"))) fm.value = params.get("marca");
   }
+  if(params.get("carburant")) document.getElementById("f-carb").value = params.get("carburant");
+  if(params.get("buget")) document.getElementById("f-buget").value = params.get("buget");
   ["change","input"].forEach(ev=>{
-    [fMarca,fCarb,fCutie,fBuget,fAn,fSearch,fSort,fStatus].forEach(el=>el.addEventListener(ev,apply));
+    ["f-marca","f-carb","f-cutie","f-buget","f-an","f-search","f-sort","f-status"].forEach(id=>{
+      const el = document.getElementById(id);
+      if(el) el.addEventListener(ev, applyStock);
+    });
   });
   document.getElementById("f-reset")?.addEventListener("click", ()=>{
-    [fMarca,fCarb,fCutie,fBuget,fAn,fStatus,fSort].forEach(el=>el.value="");fSearch.value="";apply();
+    ["f-marca","f-carb","f-cutie","f-buget","f-an","f-status","f-sort"].forEach(id=>{document.getElementById(id).value="";});
+    document.getElementById("f-search").value = "";
+    applyStock();
   });
-  apply();
-})();
+  applyStock();
+}
 
 // DETTAGLI
-(function(){
+function renderDetalii(cars){
   const wrap = document.getElementById("detalii-wrap");
   if(!wrap) return;
   const id = new URLSearchParams(location.search).get("id");
-  const cars = loadCars();
   const c = cars.find(x=>String(x.id)===String(id)) || cars[0];
-  if(!c){ wrap.innerHTML="<p>Auto non trovata.</p>"; return; }
+  if(!c){ wrap.innerHTML = "<p>Auto non trovata.</p>"; return; }
   document.title = `${c.marca} ${c.model} ${c.an} | Auto ZM`;
   const s = statusLabel(c.status);
-  const imgs = (c.imagini&&c.imagini.length?c.imagini:["https://images.unsplash.com/photo-1494976388531-d1058494cdd8?q=80&w=1200&auto=format&fit=crop"]);
+  const imgs = (c.imagini && c.imagini.length ? c.imagini : ["https://images.unsplash.com/photo-1494976388531-d1058494cdd8?q=80&w=1200&auto=format&fit=crop"]);
   wrap.innerHTML = `
   <div class="detail-layout">
     <div>
@@ -169,7 +169,6 @@ document.addEventListener("click", e=>{
   </div>
   <h3 style="margin:2rem 0 1rem">Auto simili</h3>
   <div class="grid-cars" id="similare"></div>`;
-
   document.querySelectorAll(".thumbs img").forEach(t=>{
     t.addEventListener("click", ()=>{
       document.querySelectorAll(".thumbs img").forEach(x=>x.classList.remove("active"));
@@ -178,8 +177,8 @@ document.addEventListener("click", e=>{
     });
   });
   const sim = cars.filter(x=>x.id!==c.id && (x.marca===c.marca || x.carburant===c.carburant)).slice(0,3);
-  document.getElementById("similare").innerHTML = (sim.length?sim:cars.filter(x=>x.id!==c.id).slice(0,3)).map(cardHTML).join("");
-})();
+  document.getElementById("similare").innerHTML = (sim.length ? sim : cars.filter(x=>x.id!==c.id).slice(0,3)).map(cardHTML).join("");
+}
 
 // Modulo contatti (demo, senza backend)
 (function(){
@@ -187,7 +186,19 @@ document.addEventListener("click", e=>{
   if(!f) return;
   f.addEventListener("submit", e=>{
     e.preventDefault();
-    document.getElementById("contact-ok").style.display="block";
+    document.getElementById("contact-ok").style.display = "block";
     f.reset();
   });
 })();
+
+// AVVIO: prima i dati (cloud o locale), poi rendering + live updates
+DB.ready.then(cars=>{
+  renderFeatured(cars);
+  initStock(cars);
+  renderDetalii(cars);
+  DB.subscribe(updated=>{
+    renderFeatured(updated);
+    if(document.getElementById("stoc-grid")){ stockAll = [...updated]; buildMarche(); applyStock(); }
+    if(document.getElementById("detalii-wrap")) renderDetalii(updated);
+  });
+});

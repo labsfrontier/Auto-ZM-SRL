@@ -10,6 +10,20 @@
 2. În repo: Settings → Pages → Custom domain → scrii `www.autozm.it` → Save (GitHub emite certificat HTTPS automat)
 3. Bifezi „Enforce HTTPS". Gata — fără alte modificări în cod.
 
+### Database condiviso (Firebase) — ca anunțurile adminului să le vadă TOȚI
+Fără asta, anunțurile se salvează doar în browserul adminului. Pași (gratuit, ~10 min):
+
+1. Intră pe **console.firebase.google.com** (cont Google) → **Add project** → nume `Auto-ZM` → Continue (Analytics poți să-l dezactivezi).
+2. Meniu **Build → Realtime Database** → **Create Database** → locație `europe-west1 (Belgia)` → **Start in locked mode**.
+3. Tab **Rules** → lipește și **Publish**:
+```
+{"rules":{".read":true,".write":false,"cars":{".write":"auth != null"}}}
+```
+4. **Project Overview → </> (web)** → nickname `site` → **Register** → copiază obiectul `firebaseConfig` și **trimite-mi-l mie** — îl montez eu în `js/firebase-config.js` și public automat.
+5. Meniu **Build → Authentication → Sign-in method** → **Email/Password → Enable** → tab **Users → Add user** → email + parolă puternică → acestea devin **datele de login în panoul admin** (în locul admin/autozm123).
+
+Cum funcționează după: adminul se loghează cu emailul, tot ce salvează ajunge instant în baza comună, iar site-ul public se actualizează **live, fără refresh**, pentru toți vizitatorii. Planul gratuit ajunge lejer (1 GB, 100 conexiuni simultane).
+
 ### Important: datele adminului
 Stocul mașinilor se salvează în browser (localStorage) **separat pe fiecare adresă**. Lucrează pe URL-ul LIVE pentru anunțuri reale; ce e pe localhost rămâne local. Folosește Export/Import JSON pentru mutări.
 
